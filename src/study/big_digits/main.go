@@ -114,19 +114,32 @@ func main() {
         digits[i] = int(digit)
     }
 
-    const SEPERATOR = " "
+    const DIGIT_SEPERATOR = " "
+    const FIRST_LAST_LINE_DIGIT_SEPERATOR = "*"
     const SEPERATOR_SPAN = 2
+
+    lineLength := 0
+    for _, v := range digits {
+        if lineLength > 0 {
+            lineLength += SEPERATOR_SPAN
+        }
+        lineLength += len(digitParts[v][0])
+    }
+    first_last_line := extensions.MultiplyString(FIRST_LAST_LINE_DIGIT_SEPERATOR, lineLength)
+
+    fmt.Println(first_last_line)
+
+    digitSeperator := extensions.MultiplyString(DIGIT_SEPERATOR, SEPERATOR_SPAN)
     for i, l := 0, len(digitParts[0]); i < l; i++ {
         line := ""
         for _, v := range digits {
             if line != "" {
-                line += extensions.MultiplyString(SEPERATOR, SEPERATOR_SPAN)
+                line += digitSeperator
             }
             line += digitParts[v][i]
         }
-        if line == "" {
-            break
-        }
         fmt.Println(line)
     }
+
+    fmt.Println(first_last_line)
 }
