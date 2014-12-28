@@ -1,6 +1,7 @@
 package main
 
 import ("os"; "log"; "fmt"; "path/filepath")
+import "extensions"
 
 var digitParts [10][7]string = [10][7]string {
     {
@@ -102,17 +103,26 @@ func main() {
     }
 
     stringOfDigits := os.Args[1]
+    digitCount := len(stringOfDigits)
+    digits := make([]int, digitCount)
+    for i := 0; i < digitCount; i++ {
+        digit := stringOfDigits[i] - '0'
+        if digit < 0 || digit > 9 {
+            log.Fatal("Invalid whole number")
+        }
+
+        digits[i] = int(digit)
+    }
+
+    const SEPERATOR = " "
+    const SEPERATOR_SPAN = 2
     for i, l := 0, len(digitParts[0]); i < l; i++ {
         line := ""
-        for j := range(stringOfDigits) {
-            digit := stringOfDigits[j] - '0'
-            if digit < 0 || digit > 9 {
-                log.Fatal("Invalid whole number")
-            }
+        for _, v := range digits {
             if line != "" {
-                line += "  "
+                line += extensions.MultiplyString(SEPERATOR, SEPERATOR_SPAN)
             }
-            line += digitParts[digit][i]
+            line += digitParts[v][i]
         }
         if line == "" {
             break
