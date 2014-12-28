@@ -5,6 +5,8 @@ import (
     "fmt"
     "strconv"
     "strings"
+    "html/template"
+    "extensions/strext"
 )
 
 func homePage(writer http.ResponseWriter, request *http.Request) {
@@ -22,8 +24,9 @@ func homePage(writer http.ResponseWriter, request *http.Request) {
     }
 
     fmt.Fprint(writer, _HTML_TOP)
-    fmt.Fprintf(writer, _HTML_FORM, numbersString, errorClass, errorMessage)
-    fmt.Fprintf(writer, _HTML_RESULT_TABLE, numbersString, count, mean, median)
+    fmt.Fprintf(writer, _HTML_FORM, template.HTMLEscapeString(numbersString), errorClass,
+        template.HTMLEscapeString(errorMessage))
+    fmt.Fprintf(writer, _HTML_RESULT_TABLE, template.HTMLEscapeString(numbersString), count, mean, median)
     fmt.Fprint(writer, _HTML_BOTTOM)
 }
 
@@ -36,16 +39,19 @@ func getStatistics(request *http.Request) (count int, mean, median float64, numb
 
     numbersString = strings.Replace(numbersString, ",", " ", -1)
     var numbers []float64
+    var data []interface{}
     for _, field := range strings.Fields(numbersString) {
         if v, err := strconv.ParseFloat(field, 64); err == nil {
             numbers = append(numbers, v)
+            data = append(data, v)
         }
     }
 
     count = len(numbers)
     if count == 0 {
-        return count, mean, median, numbersString, errorMessage
+        return count, mean, median, "", errorMessage
     }
+    numbersString = strext.Join(", ", data...)
 
     stats := NewStatistics(numbers)
     return count, stats.mean, stats.median, numbersString, errorMessage
