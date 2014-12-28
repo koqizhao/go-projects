@@ -34,6 +34,35 @@ func RoundFloat32(x float32) int32 {
     return int32(Round(float64(x)))
 }
 
+func Sum(arr []float64) float64 {
+    result := 0.0
+    for i, l := 0, len(arr); i < l; i++ {
+        result += arr[i]
+    }
+    return result;
+}
+
+func Avg(arr []float64) float64 {
+    if l := len(arr); l == 0 {
+        return 0
+    } else {
+        return Sum(arr) / float64(l)
+    }
+}
+
+func Median(arr []float64) float64 {
+    l := len(arr);
+    if l == 0 {
+        return 0
+    }
+
+    result := arr[ l / 2]
+    if l % 2 == 0 {
+        result = (result + arr[ l / 2 - 1]) / 2
+    }
+    return result
+}
+
 func calculateMarginOfError(accuracy int) float64 {
     if accuracy <= 0 {
         accuracy = _DEFAULT_FLOAT_ACCURACY
