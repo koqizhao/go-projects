@@ -2,6 +2,7 @@ package strext
 
 import "strings"
 import "fmt"
+import "unicode/utf8"
 
 func IsWhitespace(s string) bool {
     return strings.Trim(s, " \t\n\r") == ""
@@ -12,12 +13,7 @@ func Mul(s string, count int) string {
         return ""
     }
 
-    var result = ""
-    for i := 0; i < count; i++ {
-        result += s
-    }
-
-    return result
+    return strings.Repeat(s, count)
 }
 
 func ToString(data interface{}) string {
@@ -33,4 +29,26 @@ func Join(separator string, data ...interface{}) string {
         result += ToString(data[i])
     }
     return result
+}
+
+func PadLeft(number, width int, char rune) string {
+    return pad(number, width, char, true)
+}
+
+func PadRight(number, width int, char rune) string {
+    return pad(number, width, char, false)
+}
+
+func pad(number, width int, char rune, left bool) string {
+    s := ToString(number)
+    gap := width - utf8.RuneCountInString(s)
+    if gap > 0 {
+        if left {
+            s = strings.Repeat(string(char), gap) + s
+        } else {
+            s += strings.Repeat(string(char), gap)
+        }
+    }
+
+    return s
 }
