@@ -3,3 +3,4 @@
 *.t
 bin/*
 pkg/*
+src/github.com/*
