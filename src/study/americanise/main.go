@@ -11,7 +11,7 @@ import (
     "regexp"
     "strings"
     "errors"
-    . "extensions"
+    . "extensions/strext"
     )
 
 func main() {
