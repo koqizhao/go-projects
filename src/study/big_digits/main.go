@@ -125,11 +125,11 @@ func main() {
         }
         lineLength += len(digitParts[v][0])
     }
-    first_last_line := strext.Multiply(FIRST_LAST_LINE_DIGIT_SEPERATOR, lineLength)
+    first_last_line := strext.Mul(FIRST_LAST_LINE_DIGIT_SEPERATOR, lineLength)
 
     fmt.Println(first_last_line)
 
-    digitSeperator := strext.Multiply(DIGIT_SEPERATOR, SEPERATOR_SPAN)
+    digitSeperator := strext.Mul(DIGIT_SEPERATOR, SEPERATOR_SPAN)
     for i, l := 0, len(digitParts[0]); i < l; i++ {
         line := ""
         for _, v := range digits {

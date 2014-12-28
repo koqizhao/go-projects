@@ -6,7 +6,7 @@ func IsWhitespace(s string) bool {
     return strings.Trim(s, " \t\n\r") == ""
 }
 
-func Multiply(s string, count int) string {
+func Mul(s string, count int) string {
     if count == 0 {
         return ""
     }
