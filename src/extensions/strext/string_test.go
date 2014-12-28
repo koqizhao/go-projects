@@ -22,3 +22,10 @@ func TestPadRight(t *testing.T) {
         t.Error("Actual", r, "Expected", _expectedRightPadding)
     }
 }
+
+func TestSimplifyWhitespace(t *testing.T) {
+    original, expected := " x x   y y   xxxy\ty\t  ", "x x y y xxxy y"
+    if actual := SimplifyWhitespace(original); actual != expected {
+        t.Error("Actual", actual, "Expected", expected, "Original", original)
+    }
+}

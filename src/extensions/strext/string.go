@@ -2,7 +2,9 @@ package strext
 
 import "strings"
 import "fmt"
+import "unicode"
 import "unicode/utf8"
+import "bytes"
 
 func IsWhitespace(s string) bool {
     return strings.Trim(s, " \t\n\r") == ""
@@ -37,6 +39,27 @@ func PadLeft(number, width int, char rune) string {
 
 func PadRight(number, width int, char rune) string {
     return pad(number, width, char, false)
+}
+
+func SimplifyWhitespace(s string) string {
+    var buffer bytes.Buffer
+    skip := true
+    for _, char := range s {
+        if unicode.IsSpace(char) {
+            if !skip {
+                buffer.WriteRune(' ')
+                skip = true
+            }
+        } else {
+            buffer.WriteRune(char)
+            skip = false
+        }
+    }
+    s = buffer.String()
+    if skip && len(s) > 0 {
+        s = s[:len(s)-1]
+    }
+    return s
 }
 
 func pad(number, width int, char rune, left bool) string {
