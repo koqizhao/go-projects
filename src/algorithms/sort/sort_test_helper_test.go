@@ -12,6 +12,7 @@ var originalData = [][]int{
 	[]int{1, 1, 1, 1, 2},
 	[]int{2, 1, 1, 1, 1},
 	[]int{0, 0, 0, 0, 0},
+	[]int{3, 2, 1},
 }
 
 var expectedData = [][]int{
@@ -24,6 +25,7 @@ var expectedData = [][]int{
 	[]int{1, 1, 1, 1, 2},
 	[]int{1, 1, 1, 1, 2},
 	[]int{0, 0, 0, 0, 0},
+	[]int{1, 2, 3},
 }
 
 type sortMethod func(arr *[]int)

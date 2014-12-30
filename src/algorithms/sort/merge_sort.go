@@ -30,7 +30,7 @@ func mergeSort(arr *[]int, start, end int) {
 			index++
 		}
 	} else if j == end {
-		for ; i < start; i++ {
+		for ; i < middle; i++ {
 			temp[index] = (*arr)[i]
 			index++
 		}
