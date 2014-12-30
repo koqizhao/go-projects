@@ -26,33 +26,6 @@ var expectedData = [][]int{
 	[]int{0, 0, 0, 0, 0},
 }
 
-var data1 = [5]int{1, 2, 3, 4, 5}
-var sortedData1 = data1
-
-var data2 = [5]int{5, 4, 3, 2, 1}
-var sortedData2 = data1
-
-var data3 = [5]int{1, 1, 1, 1, 1}
-var sortedData3 = data3
-
-var data4 = [5]int{1, 2, 3, 2, 1}
-var sortedData4 = [5]int{1, 1, 2, 2, 3}
-
-var data5 = [1]int{1}
-var sortedData5 = [1]int{1}
-
-var data6 = [0]int{}
-var sortedData6 = data6
-
-var data7 = [5]int{1, 1, 1, 1, 2}
-var sortedData7 = data7
-
-var data8 = [5]int{2, 1, 1, 1, 1}
-var sortedData8 = data7
-
-var data9 = [5]int{}
-var sortedData9 = data9
-
 type sortMethod func(arr *[]int)
 
 func areEqual(arr1, arr2 *[]int) bool {
