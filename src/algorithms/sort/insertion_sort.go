@@ -5,24 +5,18 @@ func InsertionSort(arr *[]int) {
 		return
 	}
 
-	l := len(*arr)
-	temp := make([]int, l)
-	for i := 0; i < l; i++ {
+	for i, l := 1, len(*arr); i < l; i++ {
 		k := 0
 		for ; k < i; k++ {
-			if temp[k] > (*arr)[i] {
+			if (*arr)[k] > (*arr)[i] {
 				break
 			}
 		}
-		temp2 := temp[k]
-		temp[k] = (*arr)[i]
+		temp := (*arr)[k]
+		(*arr)[k] = (*arr)[i]
 		k++
 		for ; k <= i; k++ {
-			temp2, temp[k] = temp[k], temp2
+			temp, (*arr)[k] = (*arr)[k], temp
 		}
-	}
-
-	for i := 0; i < l; i++ {
-		(*arr)[i] = temp[i]
 	}
 }
