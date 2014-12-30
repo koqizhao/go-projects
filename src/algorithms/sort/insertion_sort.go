@@ -21,4 +21,8 @@ func InsertionSort(arr *[]int) {
 			temp2, temp[k] = temp[k], temp2
 		}
 	}
+
+	for i := 0; i < l; i++ {
+		(*arr)[i] = temp[i]
+	}
 }
