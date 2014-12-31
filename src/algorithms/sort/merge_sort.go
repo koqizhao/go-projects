@@ -6,7 +6,7 @@ func MergeSort(arr *[]int) {
 
 func mergeSort(arr *[]int, start, end int) {
 	l := end - start
-	if l < 2 {
+	if l <= 1 {
 		return
 	}
 
