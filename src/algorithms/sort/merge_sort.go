@@ -1,31 +1,31 @@
 package sort
 
 func MergeSort(arr *[]int) {
-	mergeSort(arr, 0, len(*arr))
+	l := len(*arr)
+	tempArr := make([]int, l)
+	mergeSort(arr, 0, l, &tempArr)
 }
 
-func mergeSort(arr *[]int, start, end int) {
-	l := end - start
-	if l <= 1 {
+func mergeSort(arr *[]int, start, end int, tempArr *[]int) {
+	if end - start <= 1 {
 		return
 	}
 
 	middle := (start + end)/2
-	mergeSort(arr, start, middle)
-	mergeSort(arr, middle, end)
+	mergeSort(arr, start, middle, tempArr)
+	mergeSort(arr, middle, end, tempArr)
 
-	temp := make([]int, l)
-	for i, j, k := 0, start, middle; i < l; i++ {
+	for i, j, k := start, start, middle; i < end; i++ {
 		if j < middle && (k >= end || (*arr)[j] <= (*arr)[k]) {
-			temp[i] = (*arr)[j]
+			(*tempArr)[i] = (*arr)[j]
 			j++
 		} else {
-			temp[i] = (*arr)[k]
+			(*tempArr)[i] = (*arr)[k]
 			k++
 		}
 	}
 
-	for i := 0; i < l; i++ {
-		(*arr)[start + i] = temp[i]
+	for i := start; i < end; i++ {
+		(*arr)[i] = (*tempArr)[i]
 	}
 }
