@@ -5,38 +5,27 @@ func MergeSort(arr *[]int) {
 }
 
 func mergeSort(arr *[]int, start, end int) {
-	middle := start + (end-start)/2
-	if middle == start {
+	l := end - start
+	if l < 2 {
 		return
 	}
 
+	middle := (start + end)/2
 	mergeSort(arr, start, middle)
 	mergeSort(arr, middle, end)
 
-	temp := make([]int, end-start)
-	index, i, j := 0, start, middle
-	for ; i < middle && j < end; index++ {
-		if (*arr)[i] <= (*arr)[j] {
-			temp[index] = (*arr)[i]
-			i++
-		} else {
-			temp[index] = (*arr)[j]
+	temp := make([]int, l)
+	for i, j, k := 0, start, middle; i < l; i++ {
+		if j < middle && (k >= end || (*arr)[j] <= (*arr)[k]) {
+			temp[i] = (*arr)[j]
 			j++
-		}
-	}
-	if i == middle {
-		for ; j < end; j++ {
-			temp[index] = (*arr)[j]
-			index++
-		}
-	} else if j == end {
-		for ; i < middle; i++ {
-			temp[index] = (*arr)[i]
-			index++
+		} else {
+			temp[i] = (*arr)[k]
+			k++
 		}
 	}
 
-	for k := 0; k < index; k++ {
-		(*arr)[start+k] = temp[k]
+	for i := 0; i < l; i++ {
+		(*arr)[start + i] = temp[i]
 	}
 }
