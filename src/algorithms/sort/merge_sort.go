@@ -1,6 +1,10 @@
 package sort
 
 func MergeSort(arr *[]int) {
+	if arr == nil {
+		return
+	}
+
 	l := len(*arr)
 	tempArr := make([]int, l)
 	mergeSort(arr, 0, l, &tempArr)
