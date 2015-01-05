@@ -1,47 +1,43 @@
 package sort
 
 func QuickSort(arr *[]int) {
-    if arr == nil {
-        return
-    }
+	if arr == nil {
+		return
+	}
 
-    quickSortInternal(arr, 0, len(*arr) - 1)
+	quickSortInternal(arr, 0, len(*arr))
 }
 
 func quickSortInternal(arr *[]int, start int, end int) {
-    index := selectPivot(arr, start, end)
-    if index == -1 {
-        return
-    }
+	if start == end {
+		return
+	}
 
-    quickSortInternal(arr, start, index - 1)
-    quickSortInternal(arr, index + 1, end)
+	index := selectPivot(arr, start, end)
+	quickSortInternal(arr, start, index)
+	quickSortInternal(arr, index+1, end)
 }
 
 func selectPivot(arr *[]int, start int, end int) int {
-    if start < 0 || start >= end {
-        return -1
-    }
+	pivot, i, j := (*arr)[start], start, end-1
+	for i < j {
+		for ; i < j; j-- {
+			if pivot > (*arr)[j] {
+				(*arr)[i] = (*arr)[j]
+				i++
+				break
+			}
+		}
 
-    pivot := (*arr)[start]
-    for start < end {
-        for ; start < end; end-- {
-            if pivot > (*arr)[end] {
-                (*arr)[start] = (*arr)[end]
-                start++
-                break
-            }
-        }
+		for ; i < j; i++ {
+			if (*arr)[i] > pivot {
+				(*arr)[j] = (*arr)[i]
+				j--
+				break
+			}
+		}
+	}
 
-        for ; start < end; start++ {
-            if (*arr)[start] > pivot {
-                (*arr)[end] = (*arr)[start]
-                end--
-                break
-            }
-        }
-    }
-
-    (*arr)[start] = pivot
-    return start
+	(*arr)[i] = pivot
+	return i
 }
