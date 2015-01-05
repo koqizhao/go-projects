@@ -9,7 +9,7 @@ func QuickSort(arr *[]int) {
 }
 
 func quickSortInternal(arr *[]int, start int, end int) {
-	if start == end {
+	if end-start <= 1 {
 		return
 	}
 
