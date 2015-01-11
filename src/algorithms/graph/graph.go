@@ -9,7 +9,7 @@ type IGraph interface {
     GetVertices() (vertices []IVertex)
     GetVertexCount() (vertexCount int)
     AddEdge(edge IEdge)
-    RemoveEdge(origin, destination IVertex) (edge IEdge)
+    RemoveEdge(edge IVertex)
     GetEdges() (edges []IEdge)
     GetEdgeCount() (edgeCount int)
 }
@@ -24,7 +24,9 @@ func NewGraph() *Graph {
 
 func (graph *Graph) AddVertex(vertex IVertex) {
     id := strext.ToString(vertex)
-    graph.vertices[id] = vertex
+    if _, found := graph.vertices[id]; !found {
+        graph.vertices[id] = vertex
+    }
 }
 
 func (graph *Graph) RemoveVertex(vertex IVertex) {
@@ -53,25 +55,48 @@ func (graph *Graph) GetVertexCount() int {
 }
 
 func (graph *Graph) AddEdge(edge IEdge) {
-    origin, dest := edge.GetOrigin(), edge.GetDestination()
+    origin, dest := edge.GetVertices()
     originId, destId := strext.ToString(origin), strext.ToString(dest)
-    graph.vertices[originId], graph.vertices[destId] = origin, dest
-    origin.AddOutgoingEdge(edge)
-    dest.AddOutgoingEdge(edge)
+    existedOrigin, existedDest := graph.vertices[originId], graph.vertices[destId]
+    if existedOrigin == nil && existedDest == nil {
+        graph.vertices[originId], graph.vertices[destId] = origin, dest
+    } else if existedOrigin == nil {
+        graph.vertices[originId] = origin
+        dest = existedDest
+    } else if existedDest == nil {
+        graph.vertices[destId] = dest
+        origin = existedOrigin
+    } else {
+        origin, dest = existedOrigin, existedDest
+    }
+
+    origin.AddEdge(edge)
+    dest.AddEdge(edge)
 }
 
-func (graph *Graph) RemoveEdge(origin, destination IVertex) (edge IEdge) {
-    originId, destId := strext.ToString(origin), strext.ToString(destination)
-    origin, dest := graph.vertices[originId], graph.vertices[destId]
-    edge = origin.RemoveOutgoingEdge(dest)
-    dest.RemoveIncomingEdge(origin)
-    return edge
+func (graph *Graph) RemoveEdge(edge IEdge) {
+    origin, dest := edge.GetVertices()
+    originId, destId := strext.ToString(origin), strext.ToString(dest)
+    origin, dest = graph.vertices[originId], graph.vertices[destId]
+    if origin != nil || dest != nil {
+        origin.RemoveEdge(edge)
+        dest.RemoveEdge(edge)
+    }
 }
 
 func (graph *Graph) GetEdges() (edges []IEdge) {
-    return nil
+    m := map[string]IEdge{}
+    for _, vertex := range graph.vertices {
+        for _, edge := range vertex.GetEdges() {
+            m[strext.ToString(edge)] = edge
+        }
+    }
+    for _, edge := range m {
+        edges = append(edges, edge)
+    }
+    return edges
 }
 
 func (graph *Graph) GetEdgeCount() (edgeCount int) {
-    return 0
+    return len(graph.GetEdges())
 }
