@@ -25,8 +25,8 @@ func NewVertex() *Vertex {
 	return &Vertex{make(map[string]IEdge), make(map[string]IEdge), make(map[string]IEdge)}
 }
 
-func (vertex Vertex) String() string {
-	return fmt.Sprintf("%p", &vertex)
+func (vertex *Vertex) String() string {
+	return fmt.Sprintf("%p", vertex)
 }
 
 func (vertex *Vertex) AddEdge(edge IEdge) {
