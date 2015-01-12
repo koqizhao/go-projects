@@ -16,22 +16,31 @@ type IVertex interface {
 }
 
 type Vertex struct {
+	real            IVertex
 	undirectedEdges map[string]IEdge
 	outgoingEdges   map[string]IEdge
 	incomingEdges   map[string]IEdge
 }
 
 func NewVertex() *Vertex {
-	return &Vertex{make(map[string]IEdge), make(map[string]IEdge), make(map[string]IEdge)}
+	return &Vertex{nil, make(map[string]IEdge), make(map[string]IEdge), make(map[string]IEdge)}
 }
 
 func (vertex *Vertex) String() string {
-	return fmt.Sprintf("%p", vertex)
+	if vertex.real == nil {
+		return fmt.Sprintf("%p", vertex)
+	}
+	return strext.ToString(vertex.real)
+}
+
+func (vertex *Vertex) SetReal(real IVertex) {
+	vertex.real = real
 }
 
 func (vertex *Vertex) AddEdge(edge IEdge) {
+	var this IVertex = vertex
 	origin, dest := edge.GetVertices()
-	thisId, originId, destId := strext.ToString(vertex), strext.ToString(origin), strext.ToString(dest)
+	thisId, originId, destId := strext.ToString(this), strext.ToString(origin), strext.ToString(dest)
 	if thisId != originId && thisId != destId {
 		panic("The edge is not incident to the vertex.")
 	}

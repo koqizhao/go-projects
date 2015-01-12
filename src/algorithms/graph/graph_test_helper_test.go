@@ -7,14 +7,13 @@ type intVertex struct {
 	id int
 }
 
-type intEdge struct {
-	IEdge
-}
-
-type intGraph struct {
-	IGraph
-}
-
 func (vertex intVertex) String() string {
 	return strext.ToString(vertex.id)
+}
+
+func newIntVertex(id int) *intVertex {
+	v := NewVertex()
+	r := &intVertex{v, id}
+	v.SetReal(r)
+	return r
 }
