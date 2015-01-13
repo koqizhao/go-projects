@@ -12,10 +12,13 @@ type IGraph interface {
 	GetVertexCount() (vertexCount int)
 	AddEdge(edge IEdge)
 	RemoveEdge(edge IEdge)
+	HasEdge(edge IEdge) bool
 	GetEdges() (edges []IEdge)
 	GetEdgeCount() (edgeCount int)
 	DepthFirstSearch(visitVertex func(IVertex))
 	BreadthFirstSearch(visitVertex func(IVertex))
+	GenerateMininumSpanningTreeInPrimWay(lessThan func(interface{}, interface{}) bool) (mst IGraph)
+	GenerateMininumSpanningTreeInKruskalWay(lessThan func(interface{}, interface{}) bool) (mst IGraph)
 }
 
 type Graph struct {
@@ -100,10 +103,20 @@ func (graph *Graph) RemoveEdge(edge IEdge) {
 	origin, dest := edge.GetVertices()
 	originId, destId := strext.ToString(origin), strext.ToString(dest)
 	origin, dest = graph.vertices[originId], graph.vertices[destId]
-	if origin != nil || dest != nil {
+	if origin != nil && dest != nil {
 		origin.RemoveEdge(edge)
 		dest.RemoveEdge(edge)
 	}
+}
+
+func (graph *Graph) HasEdge(edge IEdge) bool {
+	origin, dest := edge.GetVertices()
+	originId := strext.ToString(origin)
+	origin = graph.vertices[originId]
+	if origin == nil {
+		return false
+	}
+	return origin.GetEdge(dest) != nil
 }
 
 func (graph *Graph) GetEdges() (edges []IEdge) {
@@ -149,6 +162,116 @@ func (graph *Graph) depthFirstSearchWithEdge(visitVertex func(IVertex), visitEdg
 	for _, v := range graph.vertices {
 		visited = dfs(v, visited, visitVertex, visitEdge)
 	}
+}
+
+func (graph *Graph) GenerateMininumSpanningTreeInPrimWay(lessThan func(interface{}, interface{}) bool) IGraph {
+	mst := NewGraph()
+	vertexCount := len(graph.vertices)
+	if vertexCount == 0 {
+		return mst
+	}
+
+	for k, v := range graph.vertices {
+		mst.vertices[k] = v
+		break
+	}
+
+	for len(mst.vertices) < vertexCount {
+		var minEdge IEdge
+		var otherVertex IVertex
+		for _, v := range mst.vertices {
+			for _, e := range v.GetEdges() {
+				if e.IsDirected() {
+					if e.HasOrigin(v) {
+						dest := e.GetOpposite(v)
+						if mst.HasVertex(dest) {
+							continue
+						}
+						if minEdge == nil || lessThan(e, minEdge) {
+							minEdge, otherVertex = e, dest
+						}
+					}
+				} else if dest := e.GetOpposite(v); dest != nil {
+					if mst.HasVertex(dest) {
+						continue
+					}
+					if minEdge == nil || lessThan(e, minEdge) {
+						minEdge, otherVertex = e, dest
+					}
+				}
+			}
+		}
+		if minEdge == nil {
+			panic("The graph is not a simple connected graph.")
+		}
+		mst.AddVertex(otherVertex)
+		mst.AddEdge(minEdge)
+	}
+
+	return mst
+}
+
+func (graph *Graph) GenerateMininumSpanningTreeInKruskalWay(lessThan func(interface{}, interface{}) bool) IGraph {
+	vertexCount := len(graph.vertices)
+	if vertexCount <= 1 {
+		mst := NewGraph()
+		for k, v := range graph.vertices {
+			mst.vertices[k] = v
+		}
+		return mst
+	}
+
+	edges := graph.GetEdges()
+	trees := []*Graph{}
+	for i, l := 0, vertexCount-1; i < l; i++ {
+		j := 0
+		var minEdge IEdge
+		for k, e := range edges {
+			if minEdge == nil || lessThan(e, minEdge) {
+				minEdge = e
+				j = k
+			}
+		}
+		if minEdge == nil {
+			panic("The graph is not a simple connected graph.")
+		}
+		newEdges := append([]IEdge{}, edges[0:j]...)
+		edges = append(newEdges, edges[j+1:]...)
+
+		origin, dest := minEdge.GetVertices()
+		var originTree, destTree *Graph
+		originTreeIndex, destTreeIndex := -1, -1
+		for index, tree := range trees {
+			if tree.HasVertex(origin) {
+				originTree, originTreeIndex = tree, index
+			}
+			if tree.HasVertex(dest) {
+				destTree, destTreeIndex = tree, index
+			}
+		}
+		if originTreeIndex != -1 && originTreeIndex == destTreeIndex {
+			continue
+		}
+		if originTreeIndex != -1 && destTreeIndex != -1 {
+			for _, e := range originTree.GetEdges() {
+				destTree.AddEdge(e)
+			}
+			destTree.AddEdge(minEdge)
+
+			newTrees := append([]*Graph{}, trees[0:originTreeIndex]...)
+			trees = append(newTrees, trees[originTreeIndex+1:]...)
+		} else if originTreeIndex == -1 && destTreeIndex == -1 {
+			tree := NewGraph()
+			tree.AddEdge(minEdge)
+			trees = append(trees, tree)
+		} else if originTreeIndex == -1 {
+			destTree.AddEdge(minEdge)
+		} else {
+			originTree.AddEdge(minEdge)
+		}
+	}
+
+	return trees[0]
 }
 
 func dfs(v IVertex, visited []string, visitVertex func(IVertex), visitEdge func(IEdge)) []string {
