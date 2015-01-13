@@ -162,12 +162,20 @@ func dfs(v IVertex, visited []string, visitVertex func(IVertex), visitEdge func(
 	}
 	for _, e := range v.GetEdges() {
 		origin, dest := e.GetVertices()
-		other, otherId := origin, strext.ToString(origin)
-		if otherId == k {
-			other, otherId = dest, strext.ToString(dest)
-		}
-		if strext.Contains(visited, otherId) {
+		originId, destId := strext.ToString(origin), strext.ToString(dest)
+		var other IVertex
+		if originId == k {
+			if strext.Contains(visited, destId) {
+				continue
+			}
+			other = dest
+		} else if e.IsDirected() {
 			continue
+		} else {
+			if strext.Contains(visited, originId) {
+				continue
+			}
+			other = origin
 		}
 		if visitEdge != nil {
 			visitEdge(e)
@@ -188,12 +196,21 @@ func bfs(v IVertex, visited []string, visitVertex func(IVertex), visitEdge func(
 	others := []IVertex{}
 	for _, e := range v.GetEdges() {
 		origin, dest := e.GetVertices()
-		other, otherId := origin, strext.ToString(origin)
-		if otherId == k {
-			other, otherId = dest, strext.ToString(dest)
-		}
-		if strext.Contains(visited, otherId) {
+		originId, destId := strext.ToString(origin), strext.ToString(dest)
+		var other IVertex
+		var otherId string
+		if originId == k {
+			if strext.Contains(visited, destId) {
+				continue
+			}
+			other, otherId = dest, destId
+		} else if e.IsDirected() {
 			continue
+		} else {
+			if strext.Contains(visited, originId) {
+				continue
+			}
+			other, otherId = origin, originId
 		}
 		visited = append(visited, otherId)
 		if visitVertex != nil {
