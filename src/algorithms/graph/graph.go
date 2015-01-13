@@ -31,19 +31,18 @@ func NewGraph() *Graph {
 
 func (graph *Graph) String() string {
 	vertices, edges := "", ""
-	visitVertex := func(v IVertex) {
+	for _, v := range graph.vertices {
 		if vertices != "" {
 			vertices += ", "
 		}
 		vertices += strext.ToString(v)
 	}
-	visitEdge := func(e IEdge) {
+	for _, e := range graph.GetEdges() {
 		if edges != "" {
 			edges += ", "
 		}
 		edges += strext.ToString(e)
 	}
-	graph.depthFirstSearchWithEdge(visitVertex, visitEdge)
 	return fmt.Sprintf("Vertices:\n%s\nEdges:\n%s", vertices, edges)
 }
 
@@ -172,31 +171,31 @@ func (graph *Graph) GenerateMininumSpanningTreeInPrimWay(lessThan func(interface
 	}
 
 	for k, v := range graph.vertices {
-		mst.vertices[k] = v
+		mst.vertices[k] = v.New()
 		break
 	}
 
 	for len(mst.vertices) < vertexCount {
 		var minEdge IEdge
-		var otherVertex IVertex
-		for _, v := range mst.vertices {
-			for _, e := range v.GetEdges() {
+		var existVertex, otherVertex IVertex
+		for k, v := range mst.vertices {
+			for _, e := range graph.vertices[k].GetEdges() {
 				if e.IsDirected() {
 					if e.HasOrigin(v) {
 						dest := e.GetOpposite(v)
 						if mst.HasVertex(dest) {
 							continue
 						}
-						if minEdge == nil || lessThan(e, minEdge) {
-							minEdge, otherVertex = e, dest
+						if minEdge == nil || lessThan(e.GetWeight(), minEdge.GetWeight()) {
+							minEdge, existVertex, otherVertex = e, v, dest
 						}
 					}
 				} else if dest := e.GetOpposite(v); dest != nil {
 					if mst.HasVertex(dest) {
 						continue
 					}
-					if minEdge == nil || lessThan(e, minEdge) {
-						minEdge, otherVertex = e, dest
+					if minEdge == nil || lessThan(e.GetWeight(), minEdge.GetWeight()) {
+						minEdge, existVertex, otherVertex = e, v, dest
 					}
 				}
 			}
@@ -204,8 +203,14 @@ func (graph *Graph) GenerateMininumSpanningTreeInPrimWay(lessThan func(interface
 		if minEdge == nil {
 			panic("The graph is not a simple connected graph.")
 		}
-		mst.AddVertex(otherVertex)
-		mst.AddEdge(minEdge)
+		newOtherVertex := otherVertex.New()
+		var newEdge IEdge
+		if minEdge.HasOrigin(existVertex) {
+			newEdge = minEdge.New(existVertex, newOtherVertex)
+		} else {
+			newEdge = minEdge.New(newOtherVertex, existVertex)
+		}
+		mst.AddEdge(newEdge)
 	}
 
 	return mst
@@ -216,7 +221,7 @@ func (graph *Graph) GenerateMininumSpanningTreeInKruskalWay(lessThan func(interf
 	if vertexCount <= 1 {
 		mst := NewGraph()
 		for k, v := range graph.vertices {
-			mst.vertices[k] = v
+			mst.vertices[k] = v.New()
 		}
 		return mst
 	}
@@ -227,7 +232,7 @@ func (graph *Graph) GenerateMininumSpanningTreeInKruskalWay(lessThan func(interf
 		j := 0
 		var minEdge IEdge
 		for k, e := range edges {
-			if minEdge == nil || lessThan(e, minEdge) {
+			if minEdge == nil || lessThan(e.GetWeight(), minEdge.GetWeight()) {
 				minEdge = e
 				j = k
 			}
@@ -239,14 +244,15 @@ func (graph *Graph) GenerateMininumSpanningTreeInKruskalWay(lessThan func(interf
 		edges = append(newEdges, edges[j+1:]...)
 
 		origin, dest := minEdge.GetVertices()
+		originId, destId := strext.ToString(origin), strext.ToString(dest)
 		var originTree, destTree *Graph
 		originTreeIndex, destTreeIndex := -1, -1
 		for index, tree := range trees {
 			if tree.HasVertex(origin) {
-				originTree, originTreeIndex = tree, index
+				origin, originTree, originTreeIndex = tree.vertices[originId], tree, index
 			}
 			if tree.HasVertex(dest) {
-				destTree, destTreeIndex = tree, index
+				dest, destTree, destTreeIndex = tree.vertices[destId], tree, index
 			}
 		}
 		if originTreeIndex != -1 && originTreeIndex == destTreeIndex {
@@ -256,18 +262,18 @@ func (graph *Graph) GenerateMininumSpanningTreeInKruskalWay(lessThan func(interf
 			for _, e := range originTree.GetEdges() {
 				destTree.AddEdge(e)
 			}
-			destTree.AddEdge(minEdge)
+			destTree.AddEdge(minEdge.New(origin, dest))
 
 			newTrees := append([]*Graph{}, trees[0:originTreeIndex]...)
 			trees = append(newTrees, trees[originTreeIndex+1:]...)
 		} else if originTreeIndex == -1 && destTreeIndex == -1 {
 			tree := NewGraph()
-			tree.AddEdge(minEdge)
+			tree.AddEdge(minEdge.New(nil, nil))
 			trees = append(trees, tree)
 		} else if originTreeIndex == -1 {
-			destTree.AddEdge(minEdge)
+			destTree.AddEdge(minEdge.New(origin.New(), dest))
 		} else {
-			originTree.AddEdge(minEdge)
+			originTree.AddEdge(minEdge.New(origin, dest.New()))
 		}
 	}
 

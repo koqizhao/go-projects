@@ -17,3 +17,9 @@ func newIntVertex(id int) *intVertex {
 	v.SetReal(r)
 	return r
 }
+
+func lessThan(x, y interface{}) bool {
+	v1 := x.(int)
+	v2 := y.(int)
+	return v1 < v2
+}

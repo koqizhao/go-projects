@@ -62,3 +62,59 @@ func TestConstructAGraph(t *testing.T) {
 	var s = strext.ToString(graph)
 	fmt.Println(s)
 }
+
+func TestGenerateMSTInPrimWay(t *testing.T) {
+	var vertices []IVertex
+	for i := 0; i < 4; i++ {
+		vertices = append(vertices, newIntVertex(i))
+	}
+
+	var edges = []IEdge{
+		NewEdge(vertices[0], vertices[1], 1, false),
+		NewEdge(vertices[1], vertices[2], 2, false),
+		NewEdge(vertices[2], vertices[3], 3, false),
+		NewEdge(vertices[3], vertices[0], 4, false),
+		NewEdge(vertices[1], vertices[3], 5, false),
+		NewEdge(vertices[2], vertices[0], 6, false),
+	}
+
+	var graph IGraph = NewGraph()
+	for _, v := range vertices {
+		graph.AddVertex(v)
+	}
+	for _, e := range edges {
+		graph.AddEdge(e)
+	}
+
+	fmt.Printf("graph:\n%s\n", strext.ToString(graph))
+	mst := graph.GenerateMininumSpanningTreeInPrimWay(lessThan)
+	fmt.Printf("MST:\n%s\n", strext.ToString(mst))
+}
+
+func TestGenerateMSTInKruskaWay(t *testing.T) {
+	var vertices []IVertex
+	for i := 0; i < 4; i++ {
+		vertices = append(vertices, newIntVertex(i))
+	}
+
+	var edges = []IEdge{
+		NewEdge(vertices[0], vertices[1], 1, false),
+		NewEdge(vertices[1], vertices[2], 2, false),
+		NewEdge(vertices[2], vertices[3], 3, false),
+		NewEdge(vertices[3], vertices[0], 4, false),
+		NewEdge(vertices[1], vertices[3], 5, false),
+		NewEdge(vertices[2], vertices[0], 6, false),
+	}
+
+	var graph IGraph = NewGraph()
+	for _, v := range vertices {
+		graph.AddVertex(v)
+	}
+	for _, e := range edges {
+		graph.AddEdge(e)
+	}
+
+	fmt.Printf("graph:\n%s\n", strext.ToString(graph))
+	mst := graph.GenerateMininumSpanningTreeInKruskalWay(lessThan)
+	fmt.Printf("MST:\n%s\n", strext.ToString(mst))
+}

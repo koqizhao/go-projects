@@ -13,6 +13,7 @@ type IVertex interface {
 	GetEdges() (edges []IEdge)
 	GetOutDegree() (outDegree int)
 	GetInDegree() (inDegree int)
+	New() IVertex
 }
 
 type Vertex struct {
@@ -24,6 +25,12 @@ type Vertex struct {
 
 func NewVertex() *Vertex {
 	return &Vertex{nil, make(map[string]IEdge), make(map[string]IEdge), make(map[string]IEdge)}
+}
+
+func (vertex *Vertex) New() IVertex {
+	newVertex := NewVertex()
+	newVertex.real = vertex.real
+	return newVertex
 }
 
 func (vertex *Vertex) String() string {

@@ -13,6 +13,7 @@ type IEdge interface {
 	HasVertex(vertex IVertex) bool
 	HasOrigin(origin IVertex) bool
 	HasDestination(destination IVertex) bool
+	New(origin, destination IVertex) IEdge
 }
 
 type Edge struct {
@@ -32,6 +33,16 @@ func NewEdge(origin, destination IVertex, weight interface{}, isDirected bool) *
 	return &Edge{origin, destination, weight, isDirected}
 }
 
+func (edge *Edge) New(origin, destination IVertex) IEdge {
+	if origin == nil {
+		origin = edge.origin.New()
+	}
+	if destination == nil {
+		destination = edge.destination.New()
+	}
+	return NewEdge(origin, destination, edge.weight, edge.isDirected)
+}
+
 func (edge *Edge) String() string {
 	if edge.isDirected {
 		return fmt.Sprintf("<%s, %s>", edge.origin, edge.destination)
@@ -46,9 +57,9 @@ func (edge *Edge) GetVertices() (IVertex, IVertex) {
 
 func (edge *Edge) GetOpposite(vertex IVertex) (opposite IVertex) {
 	if edge.HasOrigin(vertex) {
-		return edge.origin
-	} else if edge.HasDestination(vertex) {
 		return edge.destination
+	} else if edge.HasDestination(vertex) {
+		return edge.origin
 	} else {
 		return nil
 	}
