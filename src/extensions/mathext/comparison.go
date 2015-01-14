@@ -21,7 +21,7 @@ func Max(lessThan func(x, y interface{}) bool, data ...interface{}) interface{} 
 	}
 	max := data[0]
 	for i := 1; i < l; i++ {
-		if !lessThan(data[i], max) {
+		if lessThan(max, data[i]) {
 			max = data[i]
 		}
 	}
