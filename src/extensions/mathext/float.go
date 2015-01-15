@@ -20,6 +20,9 @@ func Round(x float64) int64 {
 		panic(fmt.Sprintf("%g is out of the int64 range", x))
 	}
 	if math.Abs(fraction) >= 0.5 {
+		if whole == math.MinInt64 || whole == math.MaxInt64 {
+			panic(fmt.Sprintf("%g is out of the int64 range", x))
+		}
 		if x >= 0 {
 			whole++
 		} else {
