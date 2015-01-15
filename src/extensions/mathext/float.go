@@ -40,7 +40,7 @@ func RoundFloat32(x float32) int32 {
 	return int32(rounded)
 }
 
-func Sum(arr []float64) float64 {
+func Sum(arr ...float64) float64 {
 	result := 0.0
 	for i, l := 0, len(arr); i < l; i++ {
 		result += arr[i]
@@ -48,15 +48,15 @@ func Sum(arr []float64) float64 {
 	return result
 }
 
-func Avg(arr []float64) float64 {
+func Avg(arr ...float64) float64 {
 	if l := len(arr); l == 0 {
 		return 0
 	} else {
-		return Sum(arr) / float64(l)
+		return Sum(arr...) / float64(l)
 	}
 }
 
-func Median(arr []float64) float64 {
+func Median(arr ...float64) float64 {
 	l := len(arr)
 	if l == 0 {
 		return 0

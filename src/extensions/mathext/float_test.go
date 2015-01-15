@@ -13,6 +13,13 @@ var _roundedInt64Values = []int64{1, 2, 1, 1, 2, 2, 0, -1, -1, -2, -2, -2}
 var _float32Values = []float32{1, 1.5, 1.1, 1.0, 1.7, 2.0, 0, -1, -1.1, -1.5, -1.7, -2.0}
 var _roundedInt32Values = []int32{1, 2, 1, 1, 2, 2, 0, -1, -1, -2, -2, -2}
 
+func TestSum(t *testing.T) {
+	r := Sum(_float64Values...)
+	if !AreEqualFloat(1, r) {
+		t.Error("Expected", 1, "Actual", r)
+	}
+}
+
 func TestInt64Overflow(t *testing.T) {
 	var y float64 = math.MaxInt64 + 1
 	if int64(y) != math.MinInt64 {
