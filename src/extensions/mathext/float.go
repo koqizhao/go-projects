@@ -33,7 +33,11 @@ func Round(x float64) int64 {
 }
 
 func RoundFloat32(x float32) int32 {
-	return int32(Round(float64(x)))
+	rounded := int32(Round(float64(x)))
+	if rounded > math.MaxInt32 || rounded < math.MinInt32 {
+		panic(fmt.Sprintf("%g is out of the int32 range", x))
+	}
+	return int32(rounded)
 }
 
 func Sum(arr []float64) float64 {
