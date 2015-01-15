@@ -69,9 +69,5 @@ func calculateMarginOfError(accuracy int) float64 {
 		accuracy = _MAX_FLOAT_ACCURACY
 	}
 
-	result := 1.0
-	for i := 0; i < accuracy; i++ {
-		result /= 10
-	}
-	return result
+	return math.Pow10(-accuracy)
 }
