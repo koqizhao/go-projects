@@ -1,5 +1,7 @@
-package main_test
+package main
 
-func HelloWorld_test() {
+import "testing"
 
+func TestHelloWorld(t *testing.T) {
+	HelloWorld()
 }
