@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
-	. "extensions/strext"
+	"extensions/strext"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -49,8 +49,8 @@ func filenamesFromCommandline() (string, string, string, error) {
 		return "", "", "", fmt.Errorf("usage: %s dictFile.txt inFile.txt outFile.txt", filepath.Base(os.Args[0]))
 	}
 
-	if IsWhitespace(os.Args[1]) || IsWhitespace(os.Args[2]) || IsWhitespace(os.Args[3]) {
-		return "", "", "", errors.New("Input file names are empty.")
+	if strext.IsWhitespace(os.Args[1]) || strext.IsWhitespace(os.Args[2]) || strext.IsWhitespace(os.Args[3]) {
+		return "", "", "", errors.New("input file names are empty")
 	}
 
 	return os.Args[1], os.Args[2], os.Args[3], nil
