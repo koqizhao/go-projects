@@ -6,3 +6,4 @@ pkg/*
 src/github.com/*
 *.out
 .project
+__debug_bin
